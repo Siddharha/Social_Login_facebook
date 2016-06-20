@@ -1,6 +1,7 @@
 package myapp.sociallogin.fragments;
 
 
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -13,16 +14,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import myapp.sociallogin.R;
 
@@ -33,6 +37,14 @@ public class LoginFragment extends Fragment {
     private View rootView;
     private LoginButton loginButton;
     CallbackManager callbackManager;
+    public LoginManager LoginManager;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,7 +77,7 @@ public class LoginFragment extends Fragment {
         } catch (NoSuchAlgorithmException e) {
 
         }
-
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
 
     }
 
@@ -75,16 +87,21 @@ public class LoginFragment extends Fragment {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
+
+                Toast.makeText(getActivity(),loginResult.toString(),Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onCancel() {
                 // App code
+                Toast.makeText(getActivity(),"Canceled!",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException exception) {
                 // App code
+                Toast.makeText(getActivity(),exception.toString(),Toast.LENGTH_SHORT).show();
             }
         });
     }
