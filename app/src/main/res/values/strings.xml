@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Social Login</string>
+    <string name="fb_login_protocol_scheme">fb628987463936991</string>
+</resources>
