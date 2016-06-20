@@ -6,6 +6,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.Signature;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,10 +29,15 @@ import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.login.widget.ProfilePictureView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -44,6 +51,7 @@ public class LoginFragment extends Fragment {
     private View rootView;
     private LoginButton loginButton;
     CallbackManager callbackManager;
+    ImageLoader imageLoader;
 
 
     @Override
@@ -65,6 +73,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void initialize() {
+        imageLoader = ImageLoader.getInstance();
         loginButton = (LoginButton) rootView.findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList(
                 "public_profile", "email", "user_birthday", "user_friends"));
@@ -96,8 +105,8 @@ public class LoginFragment extends Fragment {
             public void onSuccess(LoginResult loginResult) {
                 // App code
                 //Toast.makeText(getActivity(),loginResult.toString(),Toast.LENGTH_SHORT).show();
-            String id = loginResult.getAccessToken().getUserId();
-                Log.e("id",id);
+            final String myId = loginResult.getAccessToken().getUserId();
+               // Log.e("id",id);
                 GraphRequest request = GraphRequest.newMeRequest(
                         loginResult.getAccessToken(),
                         new GraphRequest.GraphJSONObjectCallback() {
@@ -109,6 +118,11 @@ public class LoginFragment extends Fragment {
                                 try {
                                     String email = object.getString("email");
                                     String birthday = object.getString("birthday"); // 01/31/1980 format
+
+                                    ProfilePictureView profilePictureView;
+                                    profilePictureView = (ProfilePictureView)rootView.findViewById(R.id.imgProfile);
+                                    profilePictureView.setProfileId(myId);
+                                    // imageLoader.displayImage(picture, imgProfile);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
